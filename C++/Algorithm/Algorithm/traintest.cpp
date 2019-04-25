@@ -8,6 +8,7 @@ std::vector<Mat> _histograms;
 Mat _labels;
 
 extern Mat lbp(Mat src);
+extern Mat elbp(Mat src, int radius, int neighbors);
 extern Mat DCP1(Mat src, int Rin, int Rex);
 extern Mat DCP2(Mat src, int Rin, int Rex);
 extern Mat spatial_histogram(Mat src, int min, int numPatterns, int grid_x, int grid_y);
@@ -27,7 +28,7 @@ void read_csv_image(string fileName, char separator, int lines, int _grid_x, int
 			cvtColor(src, src, CV_BGR2GRAY);
 			equalizeHist(src, src);
 
-                        /* If you use LBP algorithm, calculate the characteristic histogram using below method:*/
+            /* If you use Original LBP algorithm, calculate the characteristic histogram using below method:*/
 
 			Mat lbp_image = lbp(src);
 			Mat p1 = spatial_histogram(lbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
@@ -36,7 +37,17 @@ void read_csv_image(string fileName, char separator, int lines, int _grid_x, int
 				p.at<float>(i) = p1.at<float>(i);
 			}
 
-                        /* If you use DCP algorithm, calculate the characteristic histogram using below method
+			/* If you use LBP algorithm, calculate the characteristic histogram using below method
+			(You need to define radius and neighbors in functions first): */
+
+			//Mat elbp_image = elbp(src, radius, neighbors);
+			//Mat p1 = spatial_histogram(elbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat p = Mat::zeros(1, p1.cols, CV_32FC1);
+			//for (int i = 0; i < p1.cols; i++) {
+			//	p.at<float>(i) = p1.at<float>(i);
+			//}
+			
+			/* If you use DCP algorithm, calculate the characteristic histogram using below method
 			(You need to define Rin and Rex in functions first):*/
 
 			//Mat dcp_image1 = DCP1(src, Rin, Rex);
@@ -93,8 +104,8 @@ void predict(string fileName, char separator, int lines, int _grid_x, int _grid_
 			resize(src, src, cv::Size(128, 128));
 			cvtColor(src, src, CV_BGR2GRAY);
 			equalizeHist(src, src);
-
-                        /* If you use LBP algorithm, calculate the characteristic histogram using below method:*/
+			
+			/* If you use Original LBP algorithm, calculate the characteristic histogram using below method:*/
 
 			Mat lbp_image = lbp(src);
 			Mat q1 = spatial_histogram(lbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
@@ -103,7 +114,17 @@ void predict(string fileName, char separator, int lines, int _grid_x, int _grid_
 				query.at<float>(i) = q1.at<float>(i);
 			}
 
-                        /* If you use DCP algorithm, calculate the characteristic histogram using below method
+			/* If you use LBP algorithm, calculate the characteristic histogram using below method
+			(You need to define radius and neighbors in functions first): */
+
+			//Mat elbp_image = elbp(src);
+			//Mat q1 = spatial_histogram(elbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat query = Mat::zeros(1, q1.cols, CV_32FC1);
+			//for (int i = 0; i < q1.cols; i++) {
+			//	query.at<float>(i) = q1.at<float>(i);
+			//}
+			
+			/* If you use DCP algorithm, calculate the characteristic histogram using below method
 			(You need to define Rin and Rex in functions first):*/
 
 			//Mat dcp_image1 = DCP1(src, Rin, Rex);

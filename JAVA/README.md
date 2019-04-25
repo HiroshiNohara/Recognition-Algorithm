@@ -1,8 +1,8 @@
-# LBP&DCP(JAVA)
+# Original-LBP&LBP&DCP(JAVA)
 
 ## algorithm.java
 
->Encapsulating the LBP algorithm and the DCP algorithm, the texture features of the specified image can be obtained by calling any one of  `public Mat LBP(Mat src)`, `public Mat DCP1(Mat src, int Rin, int Rex)` or `public Mat DCP2(Mat src, int Rin, int Rex)`.
+>Encapsulating the Original LBP algorithm, DCP algorithm, etc, the texture features of the specified image can be obtained by calling any one of  `public Mat LBP(Mat src)`, `public Mat DCP1(Mat src, int Rin, int Rex)` or `public Mat DCP2(Mat src, int Rin, int Rex)`, etc.
 
 ## histogram.java
 

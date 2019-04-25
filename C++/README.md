@@ -1,8 +1,8 @@
-# LBP&DCP(C++)
+# Original-LBP&LBP&DCP(C++)
 
 ## algorithm.cpp
 
->Encapsulating the LBP algorithm and the DCP algorithm, the texture features of the specified image can be obtained by calling any one of  `Mat LBP(Mat src)`, `Mat DCP1(Mat src, int Rin, int Rex)` or `Mat DCP2(Mat src, int Rin, int Rex)`.
+>Encapsulating the LBP algorithm, DCP algorithm, etc, the texture features of the specified image can be obtained by calling any one of  `Mat LBP(Mat src)`, `Mat DCP1(Mat src, int Rin, int Rex)` or `Mat DCP2(Mat src, int Rin, int Rex)`, etc.
 
 ## histogram.cpp
 

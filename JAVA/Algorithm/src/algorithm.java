@@ -24,6 +24,33 @@ public class algorithm {
 		return dst;
 	}
 	
+	public Mat elbp(Mat src, int radius, int neighbors) {
+		Size size = new Size(src.rows() - 2 * radius, src.cols() - 2 * radius);
+		Mat dst = Mat.zeros(size, CvType.CV_8UC1);
+		for (int n = 0; n < neighbors; n++) {
+			float x = (float)(radius * Math.cos(2.0 * Math.PI * n / (float)(neighbors)));
+			float y = (float)(-radius * Math.sin(2.0 * Math.PI * n / (float)(neighbors)));
+			int fx = (int) (Math.floor(x));
+			int fy = (int) (Math.floor(y));
+			int cx = (int) (Math.ceil(x));
+			int cy = (int) (Math.ceil(y));
+			float ty = y - fy;
+			float tx = x - fx;
+			float w1 = (1 - tx) * (1 - ty);
+			float w2 = tx  * (1 - ty);
+			float w3 = (1 - tx) *      ty;
+			float w4 = tx  *      ty;
+			for (int i = radius; i < src.rows() - radius; i++) {
+				for (int j = radius; j < src.cols() - radius; j++) {
+					float t = (float)(w1 * src.get(i + fy, j + fx)[0] + w2 * src.get(i + fy, j + cx)[0] 
+							+ w3 * src.get(i + cy, j + fx)[0] + w4 * src.get(i + cy, j + cx)[0]);
+					dst.put(i - radius, j - radius, (int) dst.get(i - radius, j - radius)[0] + (t >= src.get(i, j)[0] ? 1 : 0) * (int) Math.pow(2, n));
+				}
+			}
+		}
+		return dst;
+	}
+	
 	public Mat DCP1(Mat src, int Rin, int Rex){
 		int neighbors = 4;
 		Size size = new Size(src.rows() - 2 * Rex, src.cols() - 2 * Rex);
