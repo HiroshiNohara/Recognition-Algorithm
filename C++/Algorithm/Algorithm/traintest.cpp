@@ -117,7 +117,7 @@ void predict(string fileName, char separator, int lines, int _grid_x, int _grid_
 			/* If you use LBP algorithm, calculate the characteristic histogram using below method
 			(You need to define radius and neighbors in functions first): */
 
-			//Mat elbp_image = elbp(src);
+                        //Mat elbp_image = elbp(src, radius, neighbors);
 			//Mat q1 = spatial_histogram(elbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
 			//Mat query = Mat::zeros(1, q1.cols, CV_32FC1);
 			//for (int i = 0; i < q1.cols; i++) {
