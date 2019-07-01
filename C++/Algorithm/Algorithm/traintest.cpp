@@ -11,6 +11,8 @@ extern Mat lbp(Mat src);
 extern Mat elbp(Mat src, int radius, int neighbors);
 extern Mat DCP1(Mat src, int Rin, int Rex);
 extern Mat DCP2(Mat src, int Rin, int Rex);
+extern Mat LTP1(Mat src, int radius, int neighbors, float threshold, bool adaption);
+extern Mat LTP2(Mat src, int radius, int neighbors, float threshold, bool adaption);
 extern Mat spatial_histogram(Mat src, int min, int numPatterns, int grid_x, int grid_y);
 
 void read_csv_image(string fileName, char separator, int lines, int _grid_x, int _grid_y){
@@ -41,7 +43,7 @@ void read_csv_image(string fileName, char separator, int lines, int _grid_x, int
 			(You need to define radius and neighbors in functions first): */
 
 			//Mat elbp_image = elbp(src, radius, neighbors);
-			//Mat p1 = spatial_histogram(elbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat p1 = spatial_histogram(elbp_image, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
 			//Mat p = Mat::zeros(1, p1.cols, CV_32FC1);
 			//for (int i = 0; i < p1.cols; i++) {
 			//	p.at<float>(i) = p1.at<float>(i);
@@ -54,6 +56,21 @@ void read_csv_image(string fileName, char separator, int lines, int _grid_x, int
 			//Mat dcp_image2 = DCP2(src, Rin, Rex);
 			//Mat p1 = spatial_histogram(dcp_image1, 0, (int)pow(2, 8), _grid_x, _grid_y);
 			//Mat p2 = spatial_histogram(dcp_image2, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat p = Mat::zeros(1, p1.cols + p2.cols, CV_32FC1);
+			//for (int index1 = 0; index1 < p1.cols; index1++){
+			//	p.at<float>(index1) = p1.at<float>(index1);
+			//}
+			//for (int index2 = p1.cols; index2 < p1.cols + p2.cols; index2++){
+			//	p.at<float>(index2) = p2.at<float>(index2 - p1.cols);
+			//}
+
+			/* If you use LTP algorithm, calculate the characteristic histogram using below method
+			(If the adaptation is set to true, then the value of the threshold parameter is invalid):*/
+
+			//Mat ltp_image1 = LTP1(src, radius, neighbors, 5.0, false);
+			//Mat ltp_image2 = LTP2(src, radius, neighbors, 5.0, false);
+			//Mat p1 = spatial_histogram(ltp_image1, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
+		    //Mat p2 = spatial_histogram(ltp_image2, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
 			//Mat p = Mat::zeros(1, p1.cols + p2.cols, CV_32FC1);
 			//for (int index1 = 0; index1 < p1.cols; index1++){
 			//	p.at<float>(index1) = p1.at<float>(index1);
@@ -118,7 +135,7 @@ void predict(string fileName, char separator, int lines, int _grid_x, int _grid_
 			(You need to define radius and neighbors in functions first): */
 
                         //Mat elbp_image = elbp(src, radius, neighbors);
-			//Mat q1 = spatial_histogram(elbp_image, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat q1 = spatial_histogram(elbp_image, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
 			//Mat query = Mat::zeros(1, q1.cols, CV_32FC1);
 			//for (int i = 0; i < q1.cols; i++) {
 			//	query.at<float>(i) = q1.at<float>(i);
@@ -131,6 +148,21 @@ void predict(string fileName, char separator, int lines, int _grid_x, int _grid_
 			//Mat dcp_image2 = DCP2(src, Rin, Rex);
 			//Mat q1 = spatial_histogram(dcp_image1, 0, (int)pow(2, 8), _grid_x, _grid_y);
 			//Mat q2 = spatial_histogram(dcp_image2, 0, (int)pow(2, 8), _grid_x, _grid_y);
+			//Mat query = Mat::zeros(1, q1.cols + q2.cols, CV_32FC1);
+			//for (int index1 = 0; index1 < q1.cols; index1++){
+			//	query.at<float>(index1) = q1.at<float>(index1);
+			//}
+			//for (int index2 = q1.cols; index2 < q1.cols + q2.cols; index2++){
+			//	query.at<float>(index2) = q2.at<float>(index2 - q1.cols);
+			//}
+
+			/* If you use LTP algorithm, calculate the characteristic histogram using below method
+			(If the adaptation is set to true, then the value of the threshold parameter is invalid):*/
+
+			//Mat ltp_image1 = LTP1(src, radius, neighbors, 5.0, false);
+			//Mat ltp_image2 = LTP2(src, radius, neighbors, 5.0, false);
+			//Mat q1 = spatial_histogram(ltp_image1, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
+			//Mat q2 = spatial_histogram(ltp_image2, 0, (int)pow(2, neighbors), _grid_x, _grid_y);
 			//Mat query = Mat::zeros(1, q1.cols + q2.cols, CV_32FC1);
 			//for (int index1 = 0; index1 < q1.cols; index1++){
 			//	query.at<float>(index1) = q1.at<float>(index1);

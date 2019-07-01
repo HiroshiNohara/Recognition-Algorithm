@@ -65,8 +65,8 @@ inline void elbp_(Mat src, OutputArray _dst, int radius, int neighbors) {
 		float tx = x - fx;
 		float w1 = (1 - tx) * (1 - ty);
 		float w2 = tx  * (1 - ty);
-		float w3 = (1 - tx) *      ty;
-		float w4 = tx  *      ty;
+		float w3 = (1 - tx) * ty;
+		float w4 = tx * ty;
 		for (int i = radius; i < src.rows - radius; i++) {
 			for (int j = radius; j < src.cols - radius; j++) {
 				float t = static_cast<float>(w1 * src.at<_Tp>(i + fy, j + fx) + w2 * src.at<_Tp>(i + fy, j + cx) + w3 * src.at<_Tp>(i + cy, j + fx) + w4 * src.at<_Tp>(i + cy, j + cx));
@@ -119,8 +119,8 @@ inline void DCP1_(Mat src, OutputArray _dst, int Rin, int Rex) {
 		float tAx = Ax - fAx;
 		float wA1 = (1 - tAx) * (1 - tAy);
 		float wA2 = tAx  * (1 - tAy);
-		float wA3 = (1 - tAx) *      tAy;
-		float wA4 = tAx  *      tAy;
+		float wA3 = (1 - tAx) * tAy;
+		float wA4 = tAx * tAy;
 
 		int fBx = static_cast<int>(floor(Bx));
 		int fBy = static_cast<int>(floor(By));
@@ -130,8 +130,8 @@ inline void DCP1_(Mat src, OutputArray _dst, int Rin, int Rex) {
 		float tBx = Bx - fBx;
 		float wB1 = (1 - tBx) * (1 - tBy);
 		float wB2 = tBx  * (1 - tBy);
-		float wB3 = (1 - tBx) *      tBy;
-		float wB4 = tBx  *      tBy;
+		float wB3 = (1 - tBx) * tBy;
+		float wB4 = tBx * tBy;
 		for (int i = Rex; i < src.rows - Rex; i++) {
 			for (int j = Rex; j < src.cols - Rex; j++) {
 				float pixelO = static_cast<float>(src.at<_Tp>(i, j));
@@ -163,8 +163,8 @@ inline void DCP2_(Mat src, OutputArray _dst, int Rin, int Rex) {
 		float tAx = Ax - fAx;
 		float wA1 = (1 - tAx) * (1 - tAy);
 		float wA2 = tAx  * (1 - tAy);
-		float wA3 = (1 - tAx) *      tAy;
-		float wA4 = tAx  *      tAy;
+		float wA3 = (1 - tAx) * tAy;
+		float wA4 = tAx * tAy;
 
 		int fBx = static_cast<int>(floor(Bx));
 		int fBy = static_cast<int>(floor(By));
@@ -174,8 +174,8 @@ inline void DCP2_(Mat src, OutputArray _dst, int Rin, int Rex) {
 		float tBx = Bx - fBx;
 		float wB1 = (1 - tBx) * (1 - tBy);
 		float wB2 = tBx  * (1 - tBy);
-		float wB3 = (1 - tBx) *      tBy;
-		float wB4 = tBx  *      tBy;
+		float wB3 = (1 - tBx) * tBy;
+		float wB4 = tBx * tBy;
 		for (int i = Rex; i < src.rows - Rex; i++) {
 			for (int j = Rex; j < src.cols - Rex; j++) {
 				float pixelO = static_cast<float>(src.at<_Tp>(i, j));
@@ -230,5 +230,128 @@ Mat DCP1(Mat src, int Rin, int Rex) {
 Mat DCP2(Mat src, int Rin, int Rex) {
 	Mat dst;
 	DCP2(src, dst, Rin, Rex);
+	return dst;
+}
+
+template <typename _Tp> static
+inline void LTP1_(Mat src, OutputArray _dst, int radius, int neighbors, float threshold, bool adaption)
+{
+	_dst.create(src.rows - 2 * radius, src.cols - 2 * radius, CV_32SC1);
+	Mat dst = _dst.getMat();
+	dst.setTo(0);
+
+	float *pixel_array = new float[neighbors];
+	float sum;
+	for (int i = radius; i < src.rows - radius; i++) {
+		for (int j = radius; j < src.cols - radius; j++) {
+			int center = src.at<_Tp>(i, j);
+			sum = 0.0;
+			for (int n = 0; n < neighbors; n++) {
+				float x = i + static_cast<float>(radius * cos(2.0 * CV_PI * n / static_cast<float>(neighbors)));
+				float y = j - static_cast<float>(radius * sin(2.0 * CV_PI * n / static_cast<float>(neighbors)));
+				int fx = static_cast<int>(floor(x));
+				int fy = static_cast<int>(floor(y));
+				int cx = static_cast<int>(ceil(x));
+				int cy = static_cast<int>(ceil(y));
+				float ty = y - fy;
+				float tx = x - fx;
+				float w1 = (1 - tx) * (1 - ty);
+				float w2 = tx  * (1 - ty);
+				float w3 = (1 - tx) * ty;
+				float w4 = tx * ty;
+				float t = static_cast<float>(w1 * src.at<_Tp>(fx, fy) + w2 * src.at<_Tp>(cx, fy) + w3 * src.at<_Tp>(fx, cy) + w4 * src.at<_Tp>(cx, cy));
+				sum += pow(t - center, 2);
+				pixel_array[n] = t;
+			}
+			float thre = adaption == true ? 0.003 * sum : threshold; //0.003 is the variance threshold
+			for (int k = 0; k < neighbors; k++) {
+				dst.at<int>(i - radius, j - radius) += pow(2, k)* (pixel_array[k] - src.at<_Tp>(i, j) > thre || (std::abs(pixel_array[k] - src.at<_Tp>(i, j) - thre) < std::numeric_limits<float>::epsilon()));
+			}
+		}
+	}
+}
+
+template <typename _Tp> static
+inline void LTP2_(Mat src, OutputArray _dst, int radius, int neighbors, float threshold, bool adaption)
+{
+	_dst.create(src.rows - 2 * radius, src.cols - 2 * radius, CV_32SC1);
+	Mat dst = _dst.getMat();
+	dst.setTo(0);
+	float *pixel_array = new float[neighbors];
+	float sum;
+	for (int i = radius; i < src.rows - radius; i++) {
+		for (int j = radius; j < src.cols - radius; j++) {
+			int center = src.at<_Tp>(i, j);
+			sum = 0.0;
+			for (int n = 0; n < neighbors; n++) {
+				float x = i + static_cast<float>(radius * cos(2.0 * CV_PI * n / static_cast<float>(neighbors)));
+				float y = j - static_cast<float>(radius * sin(2.0 * CV_PI * n / static_cast<float>(neighbors)));
+				int fx = static_cast<int>(floor(x));
+				int fy = static_cast<int>(floor(y));
+				int cx = static_cast<int>(ceil(x));
+				int cy = static_cast<int>(ceil(y));
+				float ty = y - fy;
+				float tx = x - fx;
+				float w1 = (1 - tx) * (1 - ty);
+				float w2 = tx  * (1 - ty);
+				float w3 = (1 - tx) * ty;
+				float w4 = tx * ty;
+				float t = static_cast<float>(w1 * src.at<_Tp>(fx, fy) + w2 * src.at<_Tp>(cx, fy) + w3 * src.at<_Tp>(fx, cy) + w4 * src.at<_Tp>(cx, cy));
+				sum += pow(t - center, 2);
+				pixel_array[n] = t;
+			}
+			float thre = adaption == true ? 0.003 * sum : threshold; //0.003 is the variance threshold
+			for (int k = 0; k < neighbors; k++) {
+				dst.at<int>(i - radius, j - radius) += pow(2, k)*(pixel_array[k] - src.at<_Tp>(i, j) < -thre || (std::abs(pixel_array[k] - src.at<_Tp>(i, j) + thre) < std::numeric_limits<float>::epsilon()));
+			}
+		}
+	}
+}
+
+static void LTP1(Mat src, OutputArray dst, int radius, int neighbors, float threshold, bool adaption)
+{
+	int type = src.type();
+	switch (type) {
+	case CV_8SC1:   LTP1_<char>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_8UC1:   LTP1_<unsigned char>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_16SC1:  LTP1_<short>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_16UC1:  LTP1_<unsigned short>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_32SC1:  LTP1_<int>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_32FC1:  LTP1_<float>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_64FC1:  LTP1_<double>(src, dst, radius, neighbors, threshold, adaption); break;
+	default:
+		string error_msg = format("Using Local Ternary Patterns for feature extraction only works on single-channel images (given %d). Please pass the image data as a grayscale image!", type);
+		CV_Error(CV_StsNotImplemented, error_msg);
+		break;
+	}
+}
+
+Mat LTP1(Mat src, int radius, int neighbors, float threshold, bool adaption) {
+	Mat dst;
+	LTP1(src, dst, radius, neighbors, threshold, adaption);
+	return dst;
+}
+
+static void LTP2(Mat src, OutputArray dst, int radius, int neighbors, float threshold, bool adaption)
+{
+	int type = src.type();
+	switch (type) {
+	case CV_8SC1:   LTP2_<char>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_8UC1:   LTP2_<unsigned char>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_16SC1:  LTP2_<short>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_16UC1:  LTP2_<unsigned short>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_32SC1:  LTP2_<int>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_32FC1:  LTP2_<float>(src, dst, radius, neighbors, threshold, adaption); break;
+	case CV_64FC1:  LTP2_<double>(src, dst, radius, neighbors, threshold, adaption); break;
+	default:
+		string error_msg = format("Using Local Ternary Patterns for feature extraction only works on single-channel images (given %d). Please pass the image data as a grayscale image!", type);
+		CV_Error(CV_StsNotImplemented, error_msg);
+		break;
+	}
+}
+
+Mat LTP2(Mat src, int radius, int neighbors, float threshold, bool adaption) {
+	Mat dst;
+	LTP2(src, dst, radius, neighbors, threshold, adaption);
 	return dst;
 }

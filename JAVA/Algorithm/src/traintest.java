@@ -47,7 +47,7 @@ public class traintest {
 					(You need to define radius and neighbors in functions first):*/
 					
 					//Mat elbp_image = algorithm.elbp(src, radius, neighbors);
-					//Mat p1 = histogram.spatial_histogram(elbp_image, 0, (int) Math.pow(2, 8), _grid_x, _grid_y);
+					//Mat p1 = histogram.spatial_histogram(elbp_image, 0, (int) Math.pow(2, neighbors), _grid_x, _grid_y);
 					//Mat p = Mat.zeros(1, p1.cols(), CvType.CV_32FC1);
 					//for (int i = 0; i < p1.cols(); i++) {
 					//	p.put(0, i, p1.get(0, i)[0]);
@@ -65,7 +65,22 @@ public class traintest {
 					//	p.put(0, index1, p1.get(0, index1)[0]);
 					//}
 					//for (int index2 = p1.cols(); index2 < p1.cols() + p2.cols(); index2++){
-					//	p.put(0, index2, p1.get(0, index2 - p1.cols())[0]);
+					//	p.put(0, index2, p2.get(0, index2 - p1.cols())[0]);
+					//}
+					
+					/* If you use LTP algorithm, calculate the characteristic histogram using below method
+					(If the adaptation is set to true, then the value of the threshold parameter is invalid):*/
+
+					//Mat ltp_image1 = algorithm.LTP1(src, radius, neighbors, 5.0f, false);
+					//Mat ltp_image2 = algorithm.LTP2(src, radius, neighbors, 5.0f, false);
+					//Mat p1 = histogram.spatial_histogram(ltp_image1, 0, (int)Math.pow(2, neighbors), _grid_x, _grid_y);
+					//Mat p2 = histogram.spatial_histogram(ltp_image2, 0, (int)Math.pow(2, neighbors), _grid_x, _grid_y);
+					//Mat p = Mat.zeros(1, p1.cols() + p2.cols(), CvType.CV_32FC1);
+					//for (int index1 = 0; index1 < p1.cols(); index1++){
+					//	p.put(0, index1, p1.get(0, index1)[0]);
+					//}
+					//for (int index2 = p1.cols(); index2 < p1.cols() + p2.cols(); index2++){
+					//	p.put(0, index2, p2.get(0, index2 - p1.cols())[0]);
 					//}
 					
 					_histograms.addElement(p);
@@ -130,7 +145,7 @@ public class traintest {
 					(You need to define radius and neighbors in functions first):*/
 					
 					//Mat elbp_image = algorithm.elbp(src, radius, neighbors);
-					//Mat q1 = histogram.spatial_histogram(elbp_image, 0, (int) Math.pow(2, 8), _grid_x, _grid_y);
+					//Mat q1 = histogram.spatial_histogram(elbp_image, 0, (int) Math.pow(2, neighbors), _grid_x, _grid_y);
 					//Mat query = Mat.zeros(1, q1.cols(), CvType.CV_32FC1);
 					//for (int i = 0; i < q1.cols(); i++) {
 					//	query.put(0, i, q1.get(0, i)[0]);
@@ -148,7 +163,22 @@ public class traintest {
 					//	query.put(0, index1, q1.get(0, index1)[0]);
 					//}
 					//for (int index2 = q1.cols(); index2 < q1.cols() + q2.cols(); index2++){
-					//	query.put(0, index2, q1.get(0, index2 - q1.cols())[0]);
+					//	query.put(0, index2, q2.get(0, index2 - q1.cols())[0]);
+					//}
+					
+					/* If you use LTP algorithm, calculate the characteristic histogram using below method
+					(If the adaptation is set to true, then the value of the threshold parameter is invalid):*/
+
+					//Mat ltp_image1 = algorithm.LTP1(src, radius, neighbors, 5.0f, false);
+					//Mat ltp_image2 = algorithm.LTP2(src, radius, neighbors, 5.0f, false);
+					//Mat q1 = histogram.spatial_histogram(ltp_image1, 0, (int)Math.pow(2, neighbors), _grid_x, _grid_y);
+					//Mat q2 = histogram.spatial_histogram(ltp_image2, 0, (int)Math.pow(2, neighbors), _grid_x, _grid_y);
+					//Mat query = Mat.zeros(1, q1.cols() + q2.cols(), CvType.CV_32FC1);
+					//for (int index1 = 0; index1 < q1.cols(); index1++){
+					//	query.put(0, index1, q1.get(0, index1)[0]);
+					//}
+					//for (int index2 = q1.cols(); index2 < q1.cols() + q2.cols(); index2++){
+					//	query.put(0, index2, q2.get(0, index2 - q1.cols())[0]);
 					//}
 					
 					double minDist = java.lang.Double.MAX_VALUE;
